@@ -2079,6 +2079,30 @@ func (cmd NVWrite) Execute(t transport.TPM, s ...Session) (*NVWriteResponse, err
 // NVWriteResponse is the response from TPM2_NV_Write.
 type NVWriteResponse struct{}
 
+// DictionaryAttackLockReset is the input to TPM2_DictionaryAttackLockReset.
+// See definition in Part 3, Commands, section 25.3.
+type DictionaryAttackLockReset struct {
+	// TPM_RH_LOCKOUT
+	LockHandle handle `gotpm:"handle,auth"`
+}
+
+// Command implements the Command interface.
+func (DictionaryAttackLockReset) Command() TPMCC { return TPMCCDictionaryAttackLockReset }
+
+// Execute executes the command and returns the response.
+func (cmd DictionaryAttackLockReset) Execute(t transport.TPM, s ...Session) (*DictionaryAttackLockResetResponse, error) {
+	var rsp DictionaryAttackLockResetResponse
+	err := execute[DictionaryAttackLockResetResponse](t, cmd, &rsp, s...)
+	if err != nil {
+		return nil, err
+	}
+	return &rsp, nil
+}
+
+// DictionaryAttackLockResetResponse is the response from
+// TPM2_DictionaryAttackLockReset.
+type DictionaryAttackLockResetResponse struct{}
+
 // NVExtend is the input to TPM2_NV_Extend.
 // See definition in Part 3, Commands, section 31.9.
 type NVExtend struct {
