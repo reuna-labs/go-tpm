@@ -2079,6 +2079,33 @@ func (cmd NVWrite) Execute(t transport.TPM, s ...Session) (*NVWriteResponse, err
 // NVWriteResponse is the response from TPM2_NV_Write.
 type NVWriteResponse struct{}
 
+// NVExtend is the input to TPM2_NV_Extend.
+// See definition in Part 3, Commands, section 31.9.
+type NVExtend struct {
+	// handle indicating the source of the authorization value
+	AuthHandle handle `gotpm:"handle,auth"`
+	// the NV index to extend
+	NVIndex handle `gotpm:"handle"`
+	// the data to extend into the NV index
+	Data TPM2BMaxNVBuffer
+}
+
+// Command implements the Command interface.
+func (NVExtend) Command() TPMCC { return TPMCCNVExtend }
+
+// Execute executes the command and returns the response.
+func (cmd NVExtend) Execute(t transport.TPM, s ...Session) (*NVExtendResponse, error) {
+	var rsp NVExtendResponse
+	err := execute[NVExtendResponse](t, cmd, &rsp, s...)
+	if err != nil {
+		return nil, err
+	}
+	return &rsp, nil
+}
+
+// NVExtendResponse is the response from TPM2_NV_Extend.
+type NVExtendResponse struct{}
+
 // NVIncrement is the input to TPM2_NV_Increment.
 // See definition in Part 3, Commands, section 31.8.
 type NVIncrement struct {
